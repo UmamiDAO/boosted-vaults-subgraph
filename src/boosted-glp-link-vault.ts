@@ -8,7 +8,7 @@ import {
   Withdraw as WithdrawEvent,
   WithdrawComplete as WithdrawCompleteEvent,
   WithdrawInitiated as WithdrawInitiatedEvent,
-} from "../generated/BoostedGlpUsdcVault/BoostedGlpVault";
+} from "../generated/BoostedGlpLinkVault/BoostedGlpVault";
 import {
   Approval,
   Deposit,
