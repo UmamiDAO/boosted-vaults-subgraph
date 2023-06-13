@@ -1,49 +1,22 @@
 import { Address, BigInt } from "@graphprotocol/graph-ts";
 import {
-  BoostedGlpVault,
-  Deposit as DepositEvent,
-  Deposit1 as Deposit1Event,
-  Transfer as TransferEvent,
-  Withdraw as WithdrawEvent,
-  WithdrawComplete as WithdrawCompleteEvent,
-  WithdrawInitiated as WithdrawInitiatedEvent,
-} from "../generated/BoostedGlpWethVault/BoostedGlpVault";
+  CompoundDistributeYield as CompoundDistributeYieldEvent,
+  GlpRewardClaimed as GlpRewardClaimedEvent,
+} from "../generated/AggregateVault/AggregateVaultHelper";
 import {
-  UserBoostedVaultBalanceTotal,
-  VaultPricePerShare,
-  VaultTVL,
-  VaultTotalSupply,
-  Transfer,
-  WithdrawComplete,
-  WithdrawInitiated,
-  UserBoostedVaultBalance,
-} from "../generated/schema";
+  CloseRebalance,
+  CollectVaultFees,
+  OpenRebalance,
+} from "../generated/AggregateVault/AggregateVault";
 import {
-  BOOSTED_USDC_VAULT_ADDRESS,
-  BOOSTED_WETH_VAULT_ADDRESS,
-  BOOSTED_WBTC_VAULT_ADDRESS,
   BOOSTED_LINK_VAULT_ADDRESS,
   BOOSTED_UNI_VAULT_ADDRESS,
-  ZERO_ADDRESS,
+  BOOSTED_USDC_VAULT_ADDRESS,
+  BOOSTED_WBTC_VAULT_ADDRESS,
+  BOOSTED_WETH_VAULT_ADDRESS,
 } from "./constants";
-
-function getVaultTotalSupplyEntity(
-  blockNumber: BigInt,
-  timestamp: BigInt,
-  vault: Address,
-  event: string
-): VaultTotalSupply {
-  const vaultEntityId = `${blockNumber}:${timestamp}:${vault.toHexString()}`;
-  const vaultPps = new VaultTotalSupply(vaultEntityId);
-
-  vaultPps.block = blockNumber;
-  vaultPps.timestamp = timestamp;
-  vaultPps.vault = vault.toHexString();
-  vaultPps.txHash = "";
-  vaultPps.event = event;
-
-  return vaultPps as VaultTotalSupply;
-}
+import { VaultPricePerShare, VaultTVL } from "../generated/schema";
+import { BoostedGlpVault } from "../generated/AggregateVault/BoostedGlpVault";
 
 function getBoostedVaultPpsEntity(
   blockNumber: BigInt,
@@ -81,8 +54,10 @@ function getVaultTVLEntity(
   return vaultTvl as VaultTVL;
 }
 
-export function handleDeposit(event: DepositEvent): void {
-  const eventName = "deposit";
+export function handleCollectVaultFees(event: CollectVaultFees): void {}
+
+export function handleGlpRewardClaimed(event: GlpRewardClaimedEvent): void {
+  const eventName = "claim";
   const usdcVault = BoostedGlpVault.bind(BOOSTED_USDC_VAULT_ADDRESS);
   const wethVault = BoostedGlpVault.bind(BOOSTED_WETH_VAULT_ADDRESS);
   const wbtcVault = BoostedGlpVault.bind(BOOSTED_WBTC_VAULT_ADDRESS);
@@ -99,11 +74,6 @@ export function handleDeposit(event: DepositEvent): void {
   const tvlWBTC = wbtcVault.totalAssets();
   const tvlLINK = linkVault.totalAssets();
   const tvlUNI = uniVault.totalAssets();
-  const supplyUSDC = usdcVault.totalSupply();
-  const supplyWETH = wethVault.totalSupply();
-  const supplyWBTC = wbtcVault.totalSupply();
-  const supplyLINK = linkVault.totalSupply();
-  const supplyUNI = uniVault.totalSupply();
 
   const usdcPpsEntity = getBoostedVaultPpsEntity(
     event.block.number,
@@ -194,55 +164,12 @@ export function handleDeposit(event: DepositEvent): void {
   );
   uniTvlEntity.tvl = tvlUNI;
   uniTvlEntity.save();
-
-  const usdcSupplyEntity = getVaultTotalSupplyEntity(
-    event.block.number,
-    event.block.timestamp,
-    BOOSTED_USDC_VAULT_ADDRESS,
-    eventName
-  );
-  usdcSupplyEntity.totalSupply = supplyUSDC;
-  usdcSupplyEntity.save();
-
-  const wethSupplyEntity = getVaultTotalSupplyEntity(
-    event.block.number,
-    event.block.timestamp,
-    BOOSTED_WETH_VAULT_ADDRESS,
-    eventName
-  );
-  wethSupplyEntity.totalSupply = supplyWETH;
-  wethSupplyEntity.save();
-
-  const wbtcSupplyEntity = getVaultTotalSupplyEntity(
-    event.block.number,
-    event.block.timestamp,
-    BOOSTED_WBTC_VAULT_ADDRESS,
-    eventName
-  );
-  wbtcSupplyEntity.totalSupply = supplyWBTC;
-  wbtcSupplyEntity.save();
-
-  const linkSupplyEntity = getVaultTotalSupplyEntity(
-    event.block.number,
-    event.block.timestamp,
-    BOOSTED_LINK_VAULT_ADDRESS,
-    eventName
-  );
-  linkSupplyEntity.totalSupply = supplyLINK;
-  linkSupplyEntity.save();
-
-  const uniSupplyEntity = getVaultTotalSupplyEntity(
-    event.block.number,
-    event.block.timestamp,
-    BOOSTED_UNI_VAULT_ADDRESS,
-    eventName
-  );
-  uniSupplyEntity.totalSupply = supplyUNI;
-  uniSupplyEntity.save();
 }
 
-export function handleDeposit1(event: Deposit1Event): void {
-  const eventName = "deposit1";
+export function handleCompoundDistributeYield(
+  event: CompoundDistributeYieldEvent
+): void {
+  const eventName = "compound-yield";
   const usdcVault = BoostedGlpVault.bind(BOOSTED_USDC_VAULT_ADDRESS);
   const wethVault = BoostedGlpVault.bind(BOOSTED_WETH_VAULT_ADDRESS);
   const wbtcVault = BoostedGlpVault.bind(BOOSTED_WBTC_VAULT_ADDRESS);
@@ -259,11 +186,6 @@ export function handleDeposit1(event: Deposit1Event): void {
   const tvlWBTC = wbtcVault.totalAssets();
   const tvlLINK = linkVault.totalAssets();
   const tvlUNI = uniVault.totalAssets();
-  const supplyUSDC = usdcVault.totalSupply();
-  const supplyWETH = wethVault.totalSupply();
-  const supplyWBTC = wbtcVault.totalSupply();
-  const supplyLINK = linkVault.totalSupply();
-  const supplyUNI = uniVault.totalSupply();
 
   const usdcPpsEntity = getBoostedVaultPpsEntity(
     event.block.number,
@@ -354,55 +276,10 @@ export function handleDeposit1(event: Deposit1Event): void {
   );
   uniTvlEntity.tvl = tvlUNI;
   uniTvlEntity.save();
-
-  const usdcSupplyEntity = getVaultTotalSupplyEntity(
-    event.block.number,
-    event.block.timestamp,
-    BOOSTED_USDC_VAULT_ADDRESS,
-    eventName
-  );
-  usdcSupplyEntity.totalSupply = supplyUSDC;
-  usdcSupplyEntity.save();
-
-  const wethSupplyEntity = getVaultTotalSupplyEntity(
-    event.block.number,
-    event.block.timestamp,
-    BOOSTED_WETH_VAULT_ADDRESS,
-    eventName
-  );
-  wethSupplyEntity.totalSupply = supplyWETH;
-  wethSupplyEntity.save();
-
-  const wbtcSupplyEntity = getVaultTotalSupplyEntity(
-    event.block.number,
-    event.block.timestamp,
-    BOOSTED_WBTC_VAULT_ADDRESS,
-    eventName
-  );
-  wbtcSupplyEntity.totalSupply = supplyWBTC;
-  wbtcSupplyEntity.save();
-
-  const linkSupplyEntity = getVaultTotalSupplyEntity(
-    event.block.number,
-    event.block.timestamp,
-    BOOSTED_LINK_VAULT_ADDRESS,
-    eventName
-  );
-  linkSupplyEntity.totalSupply = supplyLINK;
-  linkSupplyEntity.save();
-
-  const uniSupplyEntity = getVaultTotalSupplyEntity(
-    event.block.number,
-    event.block.timestamp,
-    BOOSTED_UNI_VAULT_ADDRESS,
-    eventName
-  );
-  uniSupplyEntity.totalSupply = supplyUNI;
-  uniSupplyEntity.save();
 }
 
-export function handleWithdraw(event: WithdrawEvent): void {
-  const eventName = "withdraw";
+export function handleOpenRebalance(event: OpenRebalance): void {
+  const eventName = "open";
   const usdcVault = BoostedGlpVault.bind(BOOSTED_USDC_VAULT_ADDRESS);
   const wethVault = BoostedGlpVault.bind(BOOSTED_WETH_VAULT_ADDRESS);
   const wbtcVault = BoostedGlpVault.bind(BOOSTED_WBTC_VAULT_ADDRESS);
@@ -419,11 +296,6 @@ export function handleWithdraw(event: WithdrawEvent): void {
   const tvlWBTC = wbtcVault.totalAssets();
   const tvlLINK = linkVault.totalAssets();
   const tvlUNI = uniVault.totalAssets();
-  const supplyUSDC = usdcVault.totalSupply();
-  const supplyWETH = wethVault.totalSupply();
-  const supplyWBTC = wbtcVault.totalSupply();
-  const supplyLINK = linkVault.totalSupply();
-  const supplyUNI = uniVault.totalSupply();
 
   const usdcPpsEntity = getBoostedVaultPpsEntity(
     event.block.number,
@@ -514,84 +386,10 @@ export function handleWithdraw(event: WithdrawEvent): void {
   );
   uniTvlEntity.tvl = tvlUNI;
   uniTvlEntity.save();
-
-  const usdcSupplyEntity = getVaultTotalSupplyEntity(
-    event.block.number,
-    event.block.timestamp,
-    BOOSTED_USDC_VAULT_ADDRESS,
-    eventName
-  );
-  usdcSupplyEntity.totalSupply = supplyUSDC;
-  usdcSupplyEntity.save();
-
-  const wethSupplyEntity = getVaultTotalSupplyEntity(
-    event.block.number,
-    event.block.timestamp,
-    BOOSTED_WETH_VAULT_ADDRESS,
-    eventName
-  );
-  wethSupplyEntity.totalSupply = supplyWETH;
-  wethSupplyEntity.save();
-
-  const wbtcSupplyEntity = getVaultTotalSupplyEntity(
-    event.block.number,
-    event.block.timestamp,
-    BOOSTED_WBTC_VAULT_ADDRESS,
-    eventName
-  );
-  wbtcSupplyEntity.totalSupply = supplyWBTC;
-  wbtcSupplyEntity.save();
-
-  const linkSupplyEntity = getVaultTotalSupplyEntity(
-    event.block.number,
-    event.block.timestamp,
-    BOOSTED_LINK_VAULT_ADDRESS,
-    eventName
-  );
-  linkSupplyEntity.totalSupply = supplyLINK;
-  linkSupplyEntity.save();
-
-  const uniSupplyEntity = getVaultTotalSupplyEntity(
-    event.block.number,
-    event.block.timestamp,
-    BOOSTED_UNI_VAULT_ADDRESS,
-    eventName
-  );
-  uniSupplyEntity.totalSupply = supplyUNI;
-  uniSupplyEntity.save();
 }
 
-export function handleWithdrawComplete(event: WithdrawCompleteEvent): void {
-  let entity = new WithdrawComplete(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  );
-  entity._asset = event.params._asset;
-  entity._account = event.params._account;
-  entity._amount = event.params._amount;
-
-  entity.blockNumber = event.block.number;
-  entity.blockTimestamp = event.block.timestamp;
-  entity.transactionHash = event.transaction.hash;
-
-  entity.save();
-}
-
-export function handleWithdrawInitiated(event: WithdrawInitiatedEvent): void {
-  let entity = new WithdrawInitiated(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  );
-  entity._asset = event.params._asset;
-  entity._account = event.params._account;
-  entity._amount = event.params._amount;
-  entity._duration = event.params._duration;
-
-  entity.blockNumber = event.block.number;
-  entity.blockTimestamp = event.block.timestamp;
-  entity.transactionHash = event.transaction.hash;
-
-  entity.save();
-
-  const eventName = "init-withdraw";
+export function handleCloseRebalance(event: CloseRebalance): void {
+  const eventName = "close";
   const usdcVault = BoostedGlpVault.bind(BOOSTED_USDC_VAULT_ADDRESS);
   const wethVault = BoostedGlpVault.bind(BOOSTED_WETH_VAULT_ADDRESS);
   const wbtcVault = BoostedGlpVault.bind(BOOSTED_WBTC_VAULT_ADDRESS);
@@ -608,11 +406,6 @@ export function handleWithdrawInitiated(event: WithdrawInitiatedEvent): void {
   const tvlWBTC = wbtcVault.totalAssets();
   const tvlLINK = linkVault.totalAssets();
   const tvlUNI = uniVault.totalAssets();
-  const supplyUSDC = usdcVault.totalSupply();
-  const supplyWETH = wethVault.totalSupply();
-  const supplyWBTC = wbtcVault.totalSupply();
-  const supplyLINK = linkVault.totalSupply();
-  const supplyUNI = uniVault.totalSupply();
 
   const usdcPpsEntity = getBoostedVaultPpsEntity(
     event.block.number,
@@ -703,140 +496,4 @@ export function handleWithdrawInitiated(event: WithdrawInitiatedEvent): void {
   );
   uniTvlEntity.tvl = tvlUNI;
   uniTvlEntity.save();
-
-  const usdcSupplyEntity = getVaultTotalSupplyEntity(
-    event.block.number,
-    event.block.timestamp,
-    BOOSTED_USDC_VAULT_ADDRESS,
-    eventName
-  );
-  usdcSupplyEntity.totalSupply = supplyUSDC;
-  usdcSupplyEntity.save();
-
-  const wethSupplyEntity = getVaultTotalSupplyEntity(
-    event.block.number,
-    event.block.timestamp,
-    BOOSTED_WETH_VAULT_ADDRESS,
-    eventName
-  );
-  wethSupplyEntity.totalSupply = supplyWETH;
-  wethSupplyEntity.save();
-
-  const wbtcSupplyEntity = getVaultTotalSupplyEntity(
-    event.block.number,
-    event.block.timestamp,
-    BOOSTED_WBTC_VAULT_ADDRESS,
-    eventName
-  );
-  wbtcSupplyEntity.totalSupply = supplyWBTC;
-  wbtcSupplyEntity.save();
-
-  const linkSupplyEntity = getVaultTotalSupplyEntity(
-    event.block.number,
-    event.block.timestamp,
-    BOOSTED_LINK_VAULT_ADDRESS,
-    eventName
-  );
-  linkSupplyEntity.totalSupply = supplyLINK;
-  linkSupplyEntity.save();
-
-  const uniSupplyEntity = getVaultTotalSupplyEntity(
-    event.block.number,
-    event.block.timestamp,
-    BOOSTED_UNI_VAULT_ADDRESS,
-    eventName
-  );
-  uniSupplyEntity.totalSupply = supplyUNI;
-  uniSupplyEntity.save();
-}
-
-export function handleTransfer(event: TransferEvent): void {
-  let entity = new Transfer(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  );
-  entity.from = event.params.from;
-  entity.to = event.params.to;
-  entity.amount = event.params.amount;
-
-  entity.blockNumber = event.block.number;
-  entity.blockTimestamp = event.block.timestamp;
-  entity.transactionHash = event.transaction.hash;
-
-  entity.save();
-
-  const amount = event.params.amount;
-
-  const from = event.params.from.toHexString();
-  const to = event.params.to.toHexString();
-
-  // Any event not listed below is considered a transfer
-  let balanceEvent = "transfer";
-  // User deposited into the vault
-  if (from == ZERO_ADDRESS) {
-    balanceEvent = "deposit";
-  }
-  // User withdrew into the vault
-  if (to == ZERO_ADDRESS) {
-    balanceEvent = "withdraw";
-  }
-
-  // ZERO_ADDRESS = deposit event, don't register ZERO_ADDRESS's balance
-  if (from != ZERO_ADDRESS) {
-    const idFromTotal = `totalVault:boosted-weth:${from}`;
-    let fromTotal = UserBoostedVaultBalanceTotal.load(idFromTotal);
-    if (fromTotal == null) {
-      fromTotal = new UserBoostedVaultBalanceTotal(idFromTotal);
-      fromTotal.usdc = BigInt.zero();
-      fromTotal.weth = amount;
-      fromTotal.wbtc = BigInt.zero();
-      fromTotal.uni = BigInt.zero();
-      fromTotal.link = BigInt.zero();
-    } else {
-      fromTotal.weth = fromTotal.weth.minus(amount);
-    }
-    fromTotal.save();
-
-    const fromHistoricalBalance = new UserBoostedVaultBalance(
-      `${event.block.number}:boosted-weth:${from}`
-    );
-    fromHistoricalBalance.block = event.block.number;
-    fromHistoricalBalance.timestamp = event.block.timestamp;
-    fromHistoricalBalance.txHash = event.transaction.hash.toHex();
-    fromHistoricalBalance.vault = BOOSTED_WETH_VAULT_ADDRESS.toHexString();
-    fromHistoricalBalance.user = from;
-    fromHistoricalBalance.value = fromTotal.weth;
-    fromHistoricalBalance.event = balanceEvent;
-
-    fromHistoricalBalance.save();
-  }
-
-  // ZERO_ADDRESS = withdraw event, don't register ZERO_ADDRESS's balance
-  if (to != ZERO_ADDRESS) {
-    const idToTotal = `totalVault:boosted-weth:${to}`;
-    let toTotal = UserBoostedVaultBalanceTotal.load(idToTotal);
-    if (toTotal == null) {
-      toTotal = new UserBoostedVaultBalanceTotal(idToTotal);
-      toTotal.usdc = BigInt.zero();
-      toTotal.weth = amount;
-      toTotal.wbtc = BigInt.zero();
-      toTotal.uni = BigInt.zero();
-      toTotal.link = BigInt.zero();
-    } else {
-      toTotal.weth = toTotal.weth.plus(amount);
-    }
-    toTotal.save();
-
-    const toHistoricalBalance = new UserBoostedVaultBalance(
-      `${event.block.number}:boosted-weth:${to}`
-    );
-    toHistoricalBalance.block = event.block.number;
-    toHistoricalBalance.timestamp = event.block.timestamp;
-    toHistoricalBalance.txHash = event.transaction.hash.toHex();
-    toHistoricalBalance.vault = BOOSTED_WETH_VAULT_ADDRESS.toHexString();
-    toHistoricalBalance.user = to;
-    toHistoricalBalance.value = toTotal.weth;
-    toHistoricalBalance.event = balanceEvent;
-
-    toHistoricalBalance.save();
-  }
 }

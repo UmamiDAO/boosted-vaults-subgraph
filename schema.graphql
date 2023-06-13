@@ -1,13 +1,3 @@
-type Approval @entity(immutable: true) {
-  id: Bytes!
-  owner: Bytes! # address
-  spender: Bytes! # address
-  amount: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
 type Deposit @entity(immutable: true) {
   id: Bytes!
   _asset: Bytes! # address
@@ -29,27 +19,11 @@ type Deposit1 @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-type Paused @entity(immutable: true) {
-  id: Bytes!
-  account: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
 type Transfer @entity(immutable: true) {
   id: Bytes!
   from: Bytes! # address
   to: Bytes! # address
   amount: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type Unpaused @entity(immutable: true) {
-  id: Bytes!
-  account: Bytes! # address
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
@@ -66,6 +40,40 @@ type Withdraw @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
+
+# BOOSTED VAULTS ENTITIES
+
+type VaultPricePerShare @entity(immutable: true) {
+  id: ID!
+  block: BigInt!
+  timestamp: BigInt!
+  event: String!
+  txHash: String!
+  vault: String!
+  pricePerShare: BigInt!
+}
+
+type VaultTVL @entity(immutable: true) {
+  id: ID!
+  block: BigInt!
+  timestamp: BigInt!
+  event: String!
+  txHash: String!
+  vault: String!
+  tvl: BigInt!
+}
+
+type VaultTotalSupply @entity(immutable: true) {
+  id: ID!
+  block: BigInt!
+  timestamp: BigInt!
+  event: String!
+  txHash: String!
+  vault: String!
+  totalSupply: BigInt!
+}
+
+# USER RELATED ENTITIES
 
 type WithdrawComplete @entity(immutable: true) {
   id: Bytes!
@@ -86,4 +94,37 @@ type WithdrawInitiated @entity(immutable: true) {
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
+}
+
+type UserBoostedBalanceEvent @entity(immutable: true) {
+  id: ID!
+  timestamp: BigInt!
+  block: BigInt!
+  txHash: String!
+  event: String!
+  token: String!
+  amount: BigInt!
+  user: String!
+  from: String!
+  to: String!
+}
+
+type UserBoostedVaultBalanceTotal @entity {
+  id: ID!
+  usdc: BigInt!
+  weth: BigInt!
+  wbtc: BigInt!
+  link: BigInt!
+  uni: BigInt!
+}
+
+type UserBoostedVaultBalance @entity(immutable: true) {
+  id: ID!
+  timestamp: BigInt!
+  block: BigInt!
+  txHash: String!
+  event: String!
+  value: BigInt!
+  user: String!
+  vault: String!
 }

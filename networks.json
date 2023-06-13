@@ -3,6 +3,25 @@
     "BoostedGlpUsdcVault": {
       "address": "0xe3d152f41424a2d18b20093c22071d3d9395e19e",
       "startBlock": 92969202
+    },
+    "BoostedGlpWethVault": {
+      "address": "0x03fdfd0abab1264329bf1d2df2e0639376c2bacd",
+      "startBlock": 92969202
+    },
+    "BoostedGlpWbtcVault": {
+      "address": "0x9ac8206cfed75ad5929667a9a9a00132807c929e",
+      "startBlock": 92969202
+    },
+    "BoostedGlpLinkVault": {
+      "address": "0x2731768ac0a5e841eae438648f52320db332ae64",
+      "startBlock": 92969202
+    },
+    "BoostedGlpUniVault": {
+      "address": "0x710921d11daed4ddfb96cb68b508a8d27b1618fb",
+      "startBlock": 92969202
+    },
+    "AggregateVault": {
+      "address": "0x2f35e5742f63010c8840f6f6f290ce85b27fe206"
     }
   }
 }
