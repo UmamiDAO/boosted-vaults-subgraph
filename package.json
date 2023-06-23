@@ -1,10 +1,10 @@
 {
-  "name": "boosted-glp-vaults-team-test",
+  "name": "boosted-glp-vaults",
   "license": "UNLICENSED",
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy:remote": "graph codegen && graph build && graph deploy --product hosted-service umamidao/boosted-glp-vaults-team-test",
+    "deploy:remote": "graph codegen && graph build && graph deploy --product hosted-service umamidao/boosted-glp-vaults",
     "test": "graph test"
   },
   "dependencies": {

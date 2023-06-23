@@ -6,9 +6,9 @@ dataSources:
     name: AggregateVault
     network: arbitrum-one
     source:
-      address: "0x2f35e5742f63010c8840f6f6f290ce85b27fe206"
+      address: "0x604ab926f30ec125f0f0407d304d71c440302f20"
       abi: AggregateVault
-      startBlock: 96274823
+      startBlock: 104125239
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -36,9 +36,9 @@ dataSources:
     name: BoostedGlpUsdcVault
     network: arbitrum-one
     source:
-      address: "0x306cd1a21a29a79ab54ac01cde44ff67d960c68e"
+      address: "0xd88be69fd3c51bd71f221e345310f8cd888136a1"
       abi: BoostedGlpVault
-      startBlock: 96274823
+      startBlock: 104126306
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -77,9 +77,9 @@ dataSources:
     name: BoostedGlpWethVault
     network: arbitrum-one
     source:
-      address: "0x9f33f4e7bdefc505f13e85f1a5442d55c7b7f856"
+      address: "0xfa39412b13cee343b2ff4ae919467c04e9a91232"
       abi: BoostedGlpVault
-      startBlock: 96274823
+      startBlock: 104126339
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -118,9 +118,9 @@ dataSources:
     name: BoostedGlpWbtcVault
     network: arbitrum-one
     source:
-      address: "0x22cf6f4d8111c2ddeceba75823993ecf289973dc"
+      address: "0x0783c35155be15c0dac4da52d3476081e74edc90"
       abi: BoostedGlpVault
-      startBlock: 96274823
+      startBlock: 104126345
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -159,9 +159,9 @@ dataSources:
     name: BoostedGlpLinkVault
     network: arbitrum-one
     source:
-      address: "0xc84e6b1f8758ba78d8e8791b2c8fbd75346527bc"
+      address: "0x0d463cb2950d5eee094cee92fdc686d8406c494f"
       abi: BoostedGlpVault
-      startBlock: 96274823
+      startBlock: 104126379
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -200,9 +200,9 @@ dataSources:
     name: BoostedGlpUniVault
     network: arbitrum-one
     source:
-      address: "0x50188540f47b8848eaced81189ad45b9391c32d9"
+      address: "0x79ad2aea593c7ac4926830c882e0a99f2d0c7709"
       abi: BoostedGlpVault
-      startBlock: 96274823
+      startBlock: 104126388
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
