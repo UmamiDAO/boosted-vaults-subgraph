@@ -107,7 +107,7 @@ export function handleDeposit(event: DepositEvent): void {
   const supplyUNI = uniVault.totalSupply();
 
   const userBalanceEvent = new UserBoostedBalanceEvent(
-    `link:deposit:${event.transaction.hash.toHex()}`
+    `link:deposit:${event.transaction.hash.toHex()}:${event.transactionLogIndex.toString()}`
   );
   const invRatio = BigInt.fromString("1").div(pricePerShareLINK);
   userBalanceEvent.block = event.block.number;
@@ -283,7 +283,7 @@ export function handleDeposit1(event: Deposit1Event): void {
   const supplyUNI = uniVault.totalSupply();
 
   const userBalanceEvent = new UserBoostedBalanceEvent(
-    `link:deposit1:${event.transaction.hash.toHex()}`
+    `link:deposit1:${event.transaction.hash.toHex()}:${event.transactionLogIndex.toString()}`
   );
 
   userBalanceEvent.block = event.block.number;
@@ -459,7 +459,7 @@ export function handleWithdraw(event: WithdrawEvent): void {
   const supplyUNI = uniVault.totalSupply();
 
   const userBalanceEvent = new UserBoostedBalanceEvent(
-    `link:withdraw:${event.transaction.hash.toHex()}`
+    `link:withdraw:${event.transaction.hash.toHex()}:${event.transactionLogIndex.toString()}`
   );
 
   userBalanceEvent.block = event.block.number;
