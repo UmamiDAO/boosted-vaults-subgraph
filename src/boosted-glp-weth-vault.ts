@@ -17,6 +17,7 @@ import {
   WithdrawComplete,
   WithdrawInitiated,
   UserBoostedVaultBalance,
+  UserBoostedBalanceEvent,
 } from "../generated/schema";
 import {
   BOOSTED_USDC_VAULT_ADDRESS,
@@ -104,6 +105,22 @@ export function handleDeposit(event: DepositEvent): void {
   const supplyWBTC = wbtcVault.totalSupply();
   const supplyLINK = linkVault.totalSupply();
   const supplyUNI = uniVault.totalSupply();
+
+  const userBalanceEvent = new UserBoostedBalanceEvent(
+    `weth:deposit:${event.transaction.hash.toHex()}:${event.transactionLogIndex.toString()}`
+  );
+  const invRatio = BigInt.fromString("1").div(pricePerShareWETH);
+  userBalanceEvent.block = event.block.number;
+  userBalanceEvent.timestamp = event.block.timestamp;
+  userBalanceEvent.txHash = event.transaction.hash.toHexString();
+  userBalanceEvent.event = eventName;
+  userBalanceEvent.token = BOOSTED_WETH_VAULT_ADDRESS.toHexString();
+  userBalanceEvent.user = event.params._account.toHexString();
+  userBalanceEvent.assets = event.params._amount;
+  userBalanceEvent.shares = event.params._amount.times(invRatio);
+  userBalanceEvent.from = event.params._account.toHexString();
+  userBalanceEvent.to = BOOSTED_WETH_VAULT_ADDRESS.toHexString();
+  userBalanceEvent.save();
 
   const usdcPpsEntity = getBoostedVaultPpsEntity(
     event.block.number,
@@ -265,6 +282,22 @@ export function handleDeposit1(event: Deposit1Event): void {
   const supplyLINK = linkVault.totalSupply();
   const supplyUNI = uniVault.totalSupply();
 
+  const userBalanceEvent = new UserBoostedBalanceEvent(
+    `weth:deposit1:${event.transaction.hash.toHex()}:${event.transactionLogIndex.toString()}`
+  );
+
+  userBalanceEvent.block = event.block.number;
+  userBalanceEvent.timestamp = event.block.timestamp;
+  userBalanceEvent.txHash = event.transaction.hash.toHexString();
+  userBalanceEvent.event = eventName;
+  userBalanceEvent.token = BOOSTED_WETH_VAULT_ADDRESS.toHexString();
+  userBalanceEvent.user = event.params.owner.toHexString();
+  userBalanceEvent.assets = event.params.assets;
+  userBalanceEvent.shares = event.params.shares;
+  userBalanceEvent.from = event.params.caller.toHexString();
+  userBalanceEvent.to = BOOSTED_WETH_VAULT_ADDRESS.toHexString();
+  userBalanceEvent.save();
+
   const usdcPpsEntity = getBoostedVaultPpsEntity(
     event.block.number,
     event.block.timestamp,
@@ -424,6 +457,22 @@ export function handleWithdraw(event: WithdrawEvent): void {
   const supplyWBTC = wbtcVault.totalSupply();
   const supplyLINK = linkVault.totalSupply();
   const supplyUNI = uniVault.totalSupply();
+
+  const userBalanceEvent = new UserBoostedBalanceEvent(
+    `weth:withdraw:${event.transaction.hash.toHex()}:${event.transactionLogIndex.toString()}`
+  );
+
+  userBalanceEvent.block = event.block.number;
+  userBalanceEvent.timestamp = event.block.timestamp;
+  userBalanceEvent.txHash = event.transaction.hash.toHexString();
+  userBalanceEvent.event = eventName;
+  userBalanceEvent.token = BOOSTED_WETH_VAULT_ADDRESS.toHexString();
+  userBalanceEvent.user = event.params.owner.toHexString();
+  userBalanceEvent.assets = event.params.assets;
+  userBalanceEvent.shares = event.params.shares;
+  userBalanceEvent.from = BOOSTED_WETH_VAULT_ADDRESS.toHexString();
+  userBalanceEvent.to = event.params.receiver.toHexString();
+  userBalanceEvent.save();
 
   const usdcPpsEntity = getBoostedVaultPpsEntity(
     event.block.number,

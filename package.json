@@ -4,10 +4,6 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "create:local": "graph create --node http://65.109.58.74:8020/ boosted-vaults",
-    "remove:local": "graph remove --node http://65.109.58.74:8020/ boosted-vaults",
-    "deploy:local": "graph deploy --node http://65.109.58.74:8020/ --ipfs http://65.109.58.74:5001 boosted-vaults",
-    "redeploy:local": "yarn remove:local && yarn create:local && yarn deploy:local",
     "deploy:remote": "graph codegen && graph build && graph deploy --product hosted-service umamidao/boosted-glp-vaults",
     "test": "graph test"
   },
